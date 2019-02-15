@@ -22,6 +22,11 @@ func initDatabase() {
 		panic(err)
 	}
 	statement.Exec()
+	statement, err = database.Prepare("CREATE TABLE IF NOT EXISTS request (id INTEGER PRIMARY KEY, Ip TEXT, Vendor TEXT, Package TEXT, Solver TEXT, Ray TEXT, Token Text, Timestamp Text)")
+	if err != nil {
+		panic(err)
+	}
+	statement.Exec()
 	database.Close()
 }
 
@@ -43,8 +48,4 @@ func GetDBInstance() sqlbuilder.Database {
 
 func CloseDB(sess sqlbuilder.Database) {
 	defer sess.Close()
-}
-
-func initDB() {
-
 }
