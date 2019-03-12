@@ -27,6 +27,11 @@ func initDatabase() {
 		panic(err)
 	}
 	statement.Exec()
+	statement, err = database.Prepare("CREATE TABLE IF NOT EXISTS environment (id INTEGER PRIMARY KEY, env-Key TEXT, env-Var TEXT, env-Vendor TEXT, env-PackageName TEXT)")
+	if err != nil {
+		panic(err)
+	}
+	statement.Exec()
 	database.Close()
 }
 
