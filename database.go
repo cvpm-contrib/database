@@ -15,23 +15,25 @@ var settings = sqlite.ConnectionURL{
 	Database: filepath.Join(getDBDir(), "cvpm-database.db"), // Path to a sqlite3 database file.
 }
 
+func runSQL(sql string, database *sql.DB) {
+	statement, err := database.Prepare(sql)
+	if err != nil {
+		panic(err)
+	}
+	statement.Exec()
+}
+
 func initDatabase() {
 	database, err := sql.Open("sqlite3", filepath.Join(getDBDir(), "cvpm-database.db"))
-	statement, err := database.Prepare("CREATE TABLE IF NOT EXISTS dataset (id INTEGER PRIMARY KEY, Name TEXT, Desc TEXT, Tags TEXT, Files TEXT, Link TEXT)")
 	if err != nil {
 		panic(err)
 	}
-	statement.Exec()
-	statement, err = database.Prepare("CREATE TABLE IF NOT EXISTS request (id INTEGER PRIMARY KEY, Ip TEXT, Vendor TEXT, Package TEXT, Solver TEXT, Ray TEXT, Token Text, Timestamp Text)")
-	if err != nil {
-		panic(err)
-	}
-	statement.Exec()
-	statement, err = database.Prepare("CREATE TABLE IF NOT EXISTS environment (id INTEGER PRIMARY KEY, env-Key TEXT, env-Var TEXT, env-Vendor TEXT, env-PackageName TEXT)")
-	if err != nil {
-		panic(err)
-	}
-	statement.Exec()
+	datasetSQLString := "CREATE TABLE IF NOT EXISTS dataset (id INTEGER PRIMARY KEY, Name TEXT, Desc TEXT, Tags TEXT, Files TEXT, Link TEXT)"
+	requestSQLString := "CREATE TABLE IF NOT EXISTS request (id INTEGER PRIMARY KEY, Ip TEXT, Vendor TEXT, Package TEXT, Solver TEXT, Ray TEXT, Token Text, Timestamp Text)"
+	environmentSQLString := "CREATE TABLE IF NOT EXISTS environment (id INTEGER PRIMARY KEY, Key TEXT, Value TEXT, Vendor TEXT, PackageName TEXT)"
+	runSQL(datasetSQLString, database)
+	runSQL(requestSQLString, database)
+	runSQL(environmentSQLString, database)
 	database.Close()
 }
 
